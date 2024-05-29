@@ -7,7 +7,7 @@ from todo.models import Todo
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ['username', 'email', 'groups']
 
 
 class ToDoSerializer(serializers.HyperlinkedModelSerializer):
