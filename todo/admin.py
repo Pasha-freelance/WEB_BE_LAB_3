@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
-from .models import Todo
+from .models import Todo, Person
 
 # Register your models here.
 admin.site.register(Todo)
+admin.site.register(Person)

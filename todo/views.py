@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import permissions, viewsets, status
 from rest_framework.decorators import api_view
 import uuid
 
-from todo.models import Todo
-from todo.serializers import UserSerializer, ToDoSerializer
+from todo.models import Todo, Person
+from todo.serializers import UserSerializer, ToDoSerializer, PersonSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -27,23 +28,48 @@ class TodoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class PersonViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows person to be viewed or edited.
+    """
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 # AUTHENTICATION
-# @api_view(['POST'])
-# def register_user(request):
-#     serializer = UserSerializer(data=request.data)
-#     if serializer.is_valid():
-#         user = serializer.save()
-#         user.set_password(request.data['password'])  # Make sure to handle password hashing
-#         user.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['POST'])
+def register_user(request):
+    serializer = PersonSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        user.set_password(request.data.get('password'))
+        user.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# TODO
+@api_view(['POST'])
+def login_user(request):
+    person = get_object_or_404(Person, username=request.data.get('username'))
+
+    if person.check_password(request.data.get('password')):
+        return Response({
+            "profileId": person.profileId,
+            "birthdate": person.birthdate,
+            "email": person.email,
+            "username": person.username,
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+# TODOS
 @api_view(['GET'])
-def all_todos(request):
+def all_todos(request, profile_id):
+    owner = get_object_or_404(Person, profileId=profile_id)
     result = []
-    for todo in Todo.objects.all():
+    for todo in Todo.objects.filter(owner=owner):
         result.append({
             "id": todo.identifier,
             "description": todo.description,
@@ -54,14 +80,21 @@ def all_todos(request):
 
 
 @api_view(['POST'])
-def add_todo(request):
-    data = request.data.copy()  # Copy request data
-    data['identifier'] = str(uuid.uuid4())
-    serializer = ToDoSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
+def add_todo(request, profile_id):
+    owner = get_object_or_404(Person, profileId=profile_id)
+    todo_item = Todo(
+        identifier=str(uuid.uuid4()),
+        description=request.data.get('description'),
+        deadline=request.data.get('deadline'),
+        owner=owner
+    )
+    serializer = ToDoSerializer(todo_item)
+
+    try:
+        todo_item.save()
         return Response(status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['PUT'])

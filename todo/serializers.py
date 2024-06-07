@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from todo.models import Todo
+from todo.models import Todo, Person
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,3 +14,9 @@ class ToDoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Todo
         fields = ['identifier', 'deadline', 'description']
+
+
+class PersonSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Person
+        fields = ['username', 'email', 'birthdate', 'profileId']
