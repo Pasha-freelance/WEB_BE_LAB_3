@@ -1,22 +1,13 @@
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import permissions, viewsets, status
-from rest_framework.decorators import api_view
 import uuid
 
+from django.http import JsonResponse
+from rest_framework import permissions, viewsets, status
+from rest_framework.decorators import api_view
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+
 from todo.models import Todo, Person
-from todo.serializers import UserSerializer, ToDoSerializer, PersonSerializer
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+from todo.serializers import ToDoSerializer, PersonSerializer
 
 
 class TodoViewSet(viewsets.ModelViewSet):
