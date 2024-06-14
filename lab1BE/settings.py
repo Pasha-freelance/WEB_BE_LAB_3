@@ -24,8 +24,10 @@ SECRET_KEY = 'django-insecure-qsw+2y20w!7qqik&#8mvp&4c_lfe4v$0akg)&z4^r$u^3n-1wl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '10.0.2.2'
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'todo',
     'rest_framework',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -119,4 +122,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'todo.Person'
-

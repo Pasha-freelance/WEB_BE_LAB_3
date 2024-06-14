@@ -1,6 +1,7 @@
 import uuid
 
 from django.http import JsonResponse
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.generics import get_object_or_404
@@ -25,9 +26,9 @@ class PersonViewSet(viewsets.ModelViewSet):
     """
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
+@swagger_auto_schema(method='post', request_body=PersonSerializer)
 # AUTHENTICATION
 @api_view(['POST'])
 def register_user(request):
@@ -62,7 +63,7 @@ def all_todos(request, profile_id):
     result = []
     for todo in Todo.objects.filter(owner=owner):
         result.append({
-            "id": todo.identifier,
+            "identifier": todo.identifier,
             "description": todo.description,
             "deadline": todo.deadline
         })
@@ -70,6 +71,7 @@ def all_todos(request, profile_id):
     return JsonResponse({'result': result})
 
 
+@swagger_auto_schema(method='post', request_body=ToDoSerializer)
 @api_view(['POST'])
 def add_todo(request, profile_id):
     owner = get_object_or_404(Person, profileId=profile_id)
@@ -79,16 +81,13 @@ def add_todo(request, profile_id):
         deadline=request.data.get('deadline'),
         owner=owner
     )
-    serializer = ToDoSerializer(todo_item)
 
-    try:
-        todo_item.save()
-        return Response(status=status.HTTP_200_OK)
-    except:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    todo_item.save()
+    return Response(status=status.HTTP_200_OK)
 
 
-@api_view(['PUT'])
+@swagger_auto_schema(method='post', request_body=ToDoSerializer)
+@api_view(['POST'])
 def edit_todo(request, identifier):
     try:
         todo = Todo.objects.get(identifier=identifier)
