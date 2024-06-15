@@ -13,7 +13,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class ToDoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Todo
-        fields = "__all__"
+        fields = ['identifier', 'deadline', 'description']
 
 
 class PersonSerializer(serializers.HyperlinkedModelSerializer):
