@@ -30,3 +30,12 @@ class Todo(models.Model):
     class Meta:
         verbose_name = "Todo"
         verbose_name_plural = "Todos"
+
+
+class EmailLog(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    user_email = models.EmailField()
+    subject = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.timestamp} - {self.user_email} - {self.subject}"
