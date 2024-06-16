@@ -153,5 +153,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'rudnitsky200206@gmail.com'
-EMAIL_HOST_PASSWORD = 'ddzv gmph yuev chhs'
+EMAIL_HOST_PASSWORD = '' #password is hidden on local machine
 DEFAULT_FROM_EMAIL = 'Celery <rudnitsky200206@gmail.com>'
