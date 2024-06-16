@@ -1,8 +1,9 @@
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from todo.routing import websocket_urlpatterns
 from todo.views import all_todos, add_todo, remove_todo, edit_todo, register_user, login_user
 
 schema_view = get_schema_view(
